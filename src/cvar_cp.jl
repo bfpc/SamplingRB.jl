@@ -1,5 +1,6 @@
 import JuMP, Ipopt, ForwardDiff
 using JuMP: Model, @variable, @constraint, @objective, @NLconstraint
+using LinearAlgebra: norm
 
 function cvar_ru(w,t,loss,alpha)
     return max(loss'w - t,0)/(1-alpha)
@@ -48,13 +49,6 @@ function add_cut!(m, wk, tk, fcf)
     return f, grad
 end
 
-function normdiff(u,v)
-    nd = 0.0
-    for (ui,vi) in zip(u,v)
-      nd += (ui-vi)^2
-    end
-    return nd
-end
 
 function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=nothing)
     dim = size(losses,1)
@@ -86,7 +80,7 @@ function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=no
         tk  = JuMP.value(m[:t])
         f, grad = add_cut!(m, wk, tk, g)
         gap = f - JuMP.objective_value(m)
-        debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", normdiff(wk, w_prev))
+        debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", norm(wk .- w_prev))
         debug > 1 && println("       UB: ", f)
         debug > 1 && println("     Sols: ", wk, " - ", tk)
         if niter > 10 && (gap < tol || gap < tol*abs(f))

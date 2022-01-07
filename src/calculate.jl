@@ -24,10 +24,9 @@ hards = Int64[]
 for d = start_day:end_day
     print(d, ", ")
     prices_sim   = RData.load(dir * "$(d)_prices_sim.RData")["prices_sim"][1,:,:]
-    print(size(prices_sim))
     prices_today = true_prices[d,:]
     losses = prices_today .- prices_sim'
-    status, w, t = cutting_planes(B, alpha, losses, tol=tol, maxiters=maxiters; debug=1)
+    status, w, t = cutting_planes(B, alpha, losses, tol=tol, maxiters=maxiters)
     if status == 1
         print(" didn't reach tolerance $tol in $maxiters iterations")
         push!(hards, d)

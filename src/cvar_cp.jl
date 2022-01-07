@@ -19,12 +19,12 @@ function fcf(x, losses; alpha=0.85)
     return t + acc/n
 end
 
-function cp_model(B)
+function cp_model(B; ub_w=2000)
     dim = length(B)
     m = Model()
 
     # Weights and RB constraint
-    @variable(m, 0 <= w[1:dim] <= 2000)
+    @variable(m, 0 <= w[1:dim] <= ub_w)
     @NLconstraint(m, sum(bi * log(wi) for (bi,wi) in zip(B,w)) >= 0.0)
 
     # CV@R auxiliary
@@ -50,7 +50,7 @@ function add_cut!(m, wk, tk, fcf)
 end
 
 
-function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=nothing)
+function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=nothing, ub_w=2000.)
     dim = size(losses,1)
     @assert dim == length(B)
     @assert 0 <= alpha <= 1
@@ -60,7 +60,7 @@ function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=no
 
     # Build model if needed
     if m == nothing
-        m = cp_model(B)
+        m = cp_model(B, ub_w=ub_w)
         JuMP.set_optimizer(m, Ipopt.Optimizer)
         JuMP.set_optimizer_attribute(m, "print_level", 0)
     end

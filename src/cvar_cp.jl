@@ -50,7 +50,7 @@ function add_cut!(m, wk, tk, fcf)
 end
 
 
-function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=nothing, ub_w=2000.)
+function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, ub_w=2000.)
     dim = size(losses,1)
     @assert dim == length(B)
     @assert 0 <= alpha <= 1
@@ -58,12 +58,10 @@ function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=no
     # Second stage value function
     g = x -> fcf(x,losses, alpha=alpha)
 
-    # Build model if needed
-    if m == nothing
-        m = cp_model(B, ub_w=ub_w)
-        JuMP.set_optimizer(m, Ipopt.Optimizer)
-        JuMP.set_optimizer_attribute(m, "print_level", 0)
-    end
+    # Build model
+    m = cp_model(B, ub_w=ub_w)
+    JuMP.set_optimizer(m, Ipopt.Optimizer)
+    JuMP.set_optimizer_attribute(m, "print_level", 0)
 
     # Add a first cut (lower bound) and an upper bound on t, to avoid degenerate solutions
     w_start = ones(dim);

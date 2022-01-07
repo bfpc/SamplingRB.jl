@@ -12,7 +12,7 @@ allowing for several thousand simulations.
 
 module CvarRiskParity
 
-include("cvar_cp") # Cutting Plane algorithm, and related utilities
+include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
 
 """
 function cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int64=1000)

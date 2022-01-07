@@ -102,10 +102,11 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
     tk     = 0.0
     for niter = 1:maxiters
         JuMP.optimize!(m)
+        lb = JuMP.objective_value(m)
         wk .= JuMP.value.(m[:w])
         tk  = JuMP.value(m[:t])
         f, grad = add_cut!(m, wk, tk, g)
-        gap = f - JuMP.objective_value(m)
+        gap = f - lb
         debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", norm(wk .- w_prev))
         debug > 1 && println("       UB: ", f)
         debug > 1 && println("     Sols: ", wk, " - ", tk)

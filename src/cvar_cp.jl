@@ -50,13 +50,13 @@ function add_cut!(m, wk, tk, fcf)
 end
 
 
-function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, ub_w=2000.)
-    dim = size(losses,1)
+function cutting_planes(B, alpha, rel_losses; tol=1e-6, debug=0, maxiters=1000, ub_w=2000.)
+    dim = size(rel_losses,1)
     @assert dim == length(B)
     @assert 0 <= alpha <= 1
 
     # Second stage value function
-    g = x -> fcf(x,losses, alpha=alpha)
+    g = x -> fcf(x,rel_losses, alpha=alpha)
 
     # Build model
     m = cp_model(B, ub_w=ub_w)

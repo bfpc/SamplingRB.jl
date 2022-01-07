@@ -3,6 +3,8 @@ Pkg.activate("../")
 
 include("cvar_cp.jl")
 
+import RData
+
 # Parameters
 dir = "/home/osboxes/Math/Risk_Parity/data/processed/gauss_dcc_gauss_garch/"
 true_prices = RData.load(dir * "allPrices.RData")["allPrices"]

@@ -88,7 +88,7 @@ function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=no
         debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", normdiff(wk, w_prev))
         debug > 1 && println("       UB: ", f)
         debug > 1 && println("     Sols: ", wk, " - ", tk)
-        if niter > 10 && gap < tol
+        if niter > 10 && (gap < tol || gap < tol*abs(f))
             return 0, wk, tk
         end
         niter += 1

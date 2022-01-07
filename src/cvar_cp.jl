@@ -59,6 +59,7 @@ end
 function cutting_planes(B, alpha, losses; tol=1e-6, debug=0, maxiters=1000, m=nothing)
     dim = size(losses,1)
     @assert dim == length(B)
+    @assert 0 <= alpha <= 1
 
     # Second stage value function
     g = x -> fcf(x,losses, alpha=alpha)

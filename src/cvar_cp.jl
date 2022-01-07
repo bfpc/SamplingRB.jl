@@ -49,8 +49,36 @@ function add_cut!(m, wk, tk, fcf)
     return f, grad
 end
 
+"""
+function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2};
+                        tol::Float64=1e-6, maxiters::Int64=1000, ub_w::Float64=2000., debug::Int64=0)
 
-function cutting_planes(B, alpha, rel_losses; tol=1e-6, debug=0, maxiters=1000, ub_w=2000.)
+    Compute the investment weights on the assets in order to build a
+    CV@R-alpha  risk budgeting portfolio using a cutting plane method.
+
+    This leads to a decomposition of the simulations of relative losses in  rel_losses
+    in smaller subproblems, and allow us to scale for several thousand realizations.
+    The portfolio is such that each asset  j  contributs to the total risk with  B[j],
+    which is also called a  risk appetite.
+
+    The algorithm stops after reaching a provable optimality gap within
+    (both absolute and relative) tolerance  tol, or after  maxiters  iterations,
+    if it fails to converge.
+
+    In the beginning, the algorithm needs a bounding box for the weights.
+    Since the logarithm already implies w > 0, we use a sufficiently large bound
+    ub_w  for all weights.  If the algorithm converges to a solution that has any
+    weight that large, it should be checked for soundness.  The most common case
+    is when the problem is unbounded below, for example if  alpha  is not large enough.
+
+    debug >= 1  prints the iteration numbers, gap and change in the weights.
+    debug >= 2  also prints the current upper bound and trial points (weights, V@R)
+
+    Returns a triplet
+    (failed, weights, V@R-alpha)
+"""
+function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2};
+                        tol::Float64=1e-6, maxiters::Int64=1000, ub_w::Float64=2000., debug::Int64=0)
     dim = size(rel_losses,1)
     @assert dim == length(B)
     @assert 0 <= alpha <= 1

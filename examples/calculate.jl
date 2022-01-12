@@ -27,8 +27,8 @@ for d in days
     prices_sim   = NPZ.npzread(simulsf(d))["prices_sim"]
     prices_today = true_prices[d,:]
     relative_losses = 1 .- prices_sim' ./ prices_today
-    status, w = cvar_rbp(B, alpha, relative_losses)
-    if status == 1
+    failed, w = cvar_rbp(B, alpha, relative_losses)
+    if failed
         println(" didn't reach tolerance $tol in $maxiters iterations")
         push!(hards, d)
     end

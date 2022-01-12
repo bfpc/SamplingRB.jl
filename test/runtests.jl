@@ -1,4 +1,4 @@
-using CvarRiskParity
+using CVaRRiskParity
 using Test
 import Random: seed!
 
@@ -18,7 +18,7 @@ function simpletest()
   @test w ≈ [0.7264, 0.8620, 1.5970] atol = 1e-4
 end
 
-@testset "CvarRiskParity.jl" begin
+@testset "CVaRRiskParity.jl" begin
   @testset "Simple" begin
     simpletest()
   end

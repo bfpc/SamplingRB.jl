@@ -1,6 +1,6 @@
-# CvarRiskParity
+# CVaRRiskParity
 
-CvarRiskParity is a package designed to calculate long-only
+CVaRRiskParity is a package designed to calculate long-only
 CV@R Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
 
@@ -14,22 +14,22 @@ We generate a simple $3 \times 10$ matrix of simulations,
 and evaluate the 0.9-CV@R risk parity portfolio (`B = ones`).
 
 ```
-  using Random: seed!
-  using CvarRiskParity
+using Random: seed!
+using CVaRRiskParity
 
-  seed!(1)
+seed!(1)
 
-  # Parameters
-  d    = 3  # dimension
-  nsim = 10 # Nb of simulations
+# Parameters
+d    = 3  # dimension
+nsim = 10 # Nb of simulations
 
-  B = ones(d)
-  alpha = 0.90
-  relative_losses = randn(d, nsim)
+B = ones(d)
+alpha = 0.90
+relative_losses = randn(d, nsim)
 
-  status, w = cvar_rbp(B, alpha, relative_losses)
-  @assert status == 0
-  @assert isapprox(w, [0.7264, 0.8620, 1.5970]; atol=1e-4)
+status, w = cvar_rbp(B, alpha, relative_losses)
+@assert status == 0
+@assert isapprox(w, [0.7264, 0.8620, 1.5970]; atol=1e-4)
 ```
 
 # Example using JuliaCall from R

@@ -2,7 +2,7 @@ import Pkg
 Pkg.activate(".")
 
 import NPZ
-using CvarRiskParity
+using CVaRRiskParity
 
 
 # Parameters

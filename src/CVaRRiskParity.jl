@@ -1,7 +1,7 @@
 """
-# CvarRiskParity
+# CVaRRiskParity
 
-CvarRiskParity is a package designed to calculate long-only
+CVaRRiskParity is a package designed to calculate long-only
 CV@R Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
 
@@ -10,7 +10,7 @@ with dedicated initialization for numerical stability and performance,
 allowing for several thousand simulations.
 """
 
-module CvarRiskParity
+module CVaRRiskParity
 
 include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
 

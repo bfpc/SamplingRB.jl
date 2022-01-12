@@ -1,4 +1,4 @@
-name = "CvarRiskParity"
+name = "CVaRRiskParity"
 uuid = "b84f0741-978f-4a85-8cef-ff508e5bc0b0"
 authors = ["Bernardo Freitas Paulo da Costa <bernardofpc@im.ufrj.br>"]
 version = "0.1.0"

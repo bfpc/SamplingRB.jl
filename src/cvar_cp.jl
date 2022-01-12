@@ -51,7 +51,7 @@ end
 
 """
     cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2};
-                   tol::Float64=1e-6, maxiters::Int64=1000, ub_w::Float64=2000., debug::Int64=0)
+                   tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
 
 Compute the investment weights on the assets in order to build a
 CV@R-alpha  risk budgeting portfolio using a cutting plane method.
@@ -78,7 +78,7 @@ Returns a triplet
 (failed, weights, V@R-alpha)
 """
 function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2};
-                        tol::Float64=1e-6, maxiters::Int64=1000, ub_w::Float64=2000., debug::Int64=0)
+                        tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
     dim = size(rel_losses,1)
     @assert dim == length(B)
     @assert 0 <= alpha <= 1

@@ -13,7 +13,7 @@ allowing for several thousand simulations.
 We generate a simple $3 \times 10$ matrix of simulations,
 and evaluate the 0.9-CV@R risk parity portfolio (`B = ones`).
 
-```
+```julia
 using Random: seed!
 using CVaRRiskParity
 

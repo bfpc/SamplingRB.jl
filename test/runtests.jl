@@ -17,10 +17,10 @@
 
 using CVaRRiskParity
 using Test
-import Random: seed!
+import Random: MersenneTwister
 
 function simpletest()
-  seed!(1)
+  rng = MersenneTwister(1)
 
   # Parameters
   d    = 3  # dimension
@@ -28,7 +28,7 @@ function simpletest()
 
   B = ones(d)
   alpha = 0.90
-  relative_losses = randn(d, nsim)
+  relative_losses = randn(rng, d, nsim)
 
   status, w = cvar_rbp(B, alpha, relative_losses)
   @test status == false

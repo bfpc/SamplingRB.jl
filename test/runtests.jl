@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License along with
 # CVaRRiskParity.jl. If not, see <https://www.gnu.org/licenses/>.
 
-using CVaRRiskParity
 using Test
-import Random: MersenneTwister
+using Random: MersenneTwister
+using CVaRRiskParity
 
 function simpletest()
   rng = MersenneTwister(1)

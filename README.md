@@ -14,10 +14,10 @@ We generate a simple $3 \times 10$ matrix of simulations,
 and evaluate the 0.9-CV@R risk parity portfolio (`B = ones`).
 
 ```julia
-using Random: seed!
+using Random: MersenneTwister
 using CVaRRiskParity
 
-seed!(1)
+rng = MersenneTwister(1)
 
 # Parameters
 d    = 3  # dimension
@@ -25,7 +25,7 @@ nsim = 10 # Nb of simulations
 
 B = ones(d)
 alpha = 0.90
-relative_losses = randn(d, nsim)
+relative_losses = randn(rng, d, nsim)
 
 status, w = cvar_rbp(B, alpha, relative_losses)
 @assert status == 0

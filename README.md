@@ -29,7 +29,7 @@ relative_losses = randn(rng, d, nsim)
 
 status, w = cvar_rbp(B, alpha, relative_losses)
 @assert status == 0
-@assert isapprox(w, [0.7264, 0.8620, 1.5970]; atol=1e-4)
+@assert isapprox(w, [0.2280, 0.2706, 0.5014]; atol=1e-4)
 ```
 
 # Example using JuliaCall from R

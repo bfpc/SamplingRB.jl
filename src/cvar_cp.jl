@@ -135,6 +135,7 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
         niter += 1
         w_prev .= wk
     end
+    wk ./= sum(wk)
     return status, wk, tk
 end
 

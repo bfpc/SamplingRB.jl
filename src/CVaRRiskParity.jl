@@ -18,7 +18,7 @@
 """
 # CVaRRiskParity
 
-CVaRRiskParity is a package designed to calculate long-only
+CVaRRiskParity is a package designed to calculate long-only weights for
 CV@R Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
 

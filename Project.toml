@@ -10,7 +10,7 @@ JuMP = "4076af6c-e467-56ae-b986-b466b2749572"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [compat]
-julia = "1.6"
 ForwardDiff = "0.10.24"
 Ipopt = "0.9.1"
 JuMP = "0.22.1"
+julia = "1.6"

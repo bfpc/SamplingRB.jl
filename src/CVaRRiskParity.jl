@@ -29,6 +29,8 @@ allowing for several thousand simulations.
 
 module CVaRRiskParity
 
+@enum OptResult Converged NotConverged
+
 include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
 
 """
@@ -48,7 +50,7 @@ For more details on the algorithm, see `cutting_planes`.
 """
 function cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int=1000)
   f, w, t = cutting_planes(B, alpha, rel_losses; tol=tol, maxiters=maxiters, debug=0)
-  return f == 1, w
+  return f == NotConverged, w
 end
 
 export cvar_rbp

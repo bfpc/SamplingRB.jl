@@ -92,7 +92,7 @@ debug >= 1  prints the iteration numbers, gap and change in the weights.
 debug >= 2  also prints the current upper bound and trial points (weights, V@R)
 
 Returns a triplet
-(failed, weights, V@R-alpha)
+(result, weights, V@R-alpha)
 """
 function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2};
                         tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
@@ -117,6 +117,7 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
     w_prev = w_start
     wk     = zeros(dim)
     tk     = 0.0
+    status = NotConverged
     for niter = 1:maxiters
         JuMP.optimize!(m)
         lb = JuMP.objective_value(m)
@@ -128,11 +129,12 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
         debug > 1 && println("       UB: ", f)
         debug > 1 && println("     Sols: ", wk, " - ", tk)
         if niter > 10 && (gap < tol || gap < tol*abs(f))
-            return 0, wk, tk
+            status = Converged
+            break
         end
         niter += 1
         w_prev .= wk
     end
-    return 1, wk, tk
+    return status, wk, tk
 end
 

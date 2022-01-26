@@ -1,7 +1,7 @@
 name = "CVaRRiskParity"
 uuid = "b84f0741-978f-4a85-8cef-ff508e5bc0b0"
 authors = ["Bernardo Freitas Paulo da Costa <bernardofpc@im.ufrj.br>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"

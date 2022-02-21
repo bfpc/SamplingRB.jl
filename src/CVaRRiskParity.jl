@@ -32,6 +32,7 @@ module CVaRRiskParity
 @enum OptResult Converged NotConverged
 
 include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
+include("cvar_sgd.jl") # Stochastic gradient algorithm
 
 """
     cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int=1000)
@@ -53,6 +54,28 @@ For more details on the algorithm, see `cutting_planes`.
 function cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int=1000)
   f, w, t = cutting_planes(B, alpha, rel_losses; tol=tol, maxiters=maxiters, debug=0)
   return f == NotConverged, w
+end
+
+
+"""
+    cvar_rbp(B::Vector{Float64}, α::Float64, loss_sampler::Function; maxiters::Int=10000)
+
+Compute the investment weights on the assets in order to build a
+CV@R-`alpha` risk budgeting portfolio given risk appetites in `B`
+and a function `loss_sampler()` that returns a sample vector
+of relative losses (from their joint distribution).
+
+The algorithm stops after `maxiters` iterations, that is, after sampling
+`maxiters` vectors of relative losses.
+
+Returns w :: Vector{Float64}
+
+For more details on the algorithm, see `projected_sgd`.
+"""
+function cvar_rbp(B::Vector{Float64}, α::Float64, loss_sampler::Function; maxiters::Int=10000)
+  v, t = projected_sgd(B, α, loss_sampler; maxiters=maxiters, debug=0)
+
+  return v./sum(v)
 end
 
 export cvar_rbp

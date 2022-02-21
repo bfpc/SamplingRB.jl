@@ -35,9 +35,32 @@ function simpletest()
   @test w ≈ [0.2280, 0.2706, 0.5014] atol = 1e-4
 end
 
+function sgd_small()
+  rng = MersenneTwister(1)
+
+  # Parameters
+  d    = 3  # dimension
+  nsim = 10 # Nb of simulations
+
+  B = ones(d)
+  alpha = 0.90
+
+  samples = randn(rng, d, nsim)
+  function sampler()
+    idx = rand(rng, 1:nsim)
+    return samples[:,idx]
+  end
+
+  w = cvar_rbp(B, alpha, sampler)
+  @test w ≈ [0.23091991, 0.27860780, 0.49047228] atol = 1e-4
+end
+
 @testset "CVaRRiskParity.jl" begin
   @testset "Simple" begin
     simpletest()
+  end
+  @testset "SGD" begin
+    sgd_small()
   end
 end
 

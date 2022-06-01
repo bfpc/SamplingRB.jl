@@ -25,9 +25,11 @@ given arbitrary simulations of relative losses of each asset.
 Currently, it implements a cutting plane algorithm
 with dedicated initialization for numerical stability and performance,
 allowing for several thousand simulations.
-It also implements a projected stochastic gradient algorithm,
+It also implements two stochastic gradient algorithms,
 taking samples from a user-defined function that allows for
 arbitrary distributions.
+One is based on the Lagrangian reformulation of the problem,
+while the other is a projected version into the feasible domain.
 """
 
 module CVaRRiskParity

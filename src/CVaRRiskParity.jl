@@ -73,10 +73,11 @@ The algorithm stops after `maxiters` iterations, that is, after sampling
 
 Returns w :: Vector{Float64}
 
-For more details on the algorithm, see `projected_sgd`.
+For more details on the algorithm, see `sgd_Lagrangian`.
 """
 function cvar_rbp(B::Vector{Float64}, α::Float64, loss_sampler::Function; maxiters::Int=10000)
-  v, t = projected_sgd(B, α, loss_sampler; maxiters=maxiters, debug=0)
+  v, t = sgd_Lagrangian(B, α, loss_sampler; maxiters=maxiters, ϵ=1e-12, debug=0)
+  # TODO: convergence test for tolerance
 
   return v./sum(v)
 end

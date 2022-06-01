@@ -47,6 +47,54 @@ function projection_model(B)
 end
 
 """
+    sgd_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
+                   maxiters::Int=100000, ϵ::Float64=1e-12, debug::Int=0)
+
+Compute the investment exposure on the assets in order to build a
+CV@R-α  risk budgeting portfolio using a stochastic gradient method
+on the Lagrangian formulation of the optimization problem,
+where we set (arbitrarily) the multiplier to one:
+   ```math
+   min._{v} CV@R_alpha[L(v)] - sum B_i log(v_i)
+   ```
+
+This is made possible by the introduction of an auxiliary variable  t
+which replaces the CVaR by an expectation, for which stochastic gradients
+are easy to calculate.
+
+The algorithm stops after maxiter iterations.
+
+Because of the logarithms, in order to remain in the correct
+(and convex) feasible domain for  v  one must ensure all its entries
+are strictly positive.  This is done using the parameter ϵ,
+which should be a very small positive number.
+
+debug >= 1  prints the iteration numbers, exposures and current estimate of V@R.
+
+Returns a pair (v, V@R-α)
+"""
+function sgd_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
+                        maxiters::Int=10000, ϵ::Float64=1e-12, debug::Int=0)
+    @assert 0 <= α <= 1
+    @assert ϵ > 0
+    dim = length(B)
+
+    # Starting point
+    v = ones(dim);
+    t = 0.;
+
+    for niter = 1:maxiters
+        dv, dt = subgrad_oracle(v, t, loss_sampler(), α)
+        v .-= (dv - B./v)/niter
+        t  -= dt/niter
+        # Truncate negative numbers to a small positive number
+        v  .= max.(v, ϵ)
+        debug > 0 && println("Iteration: ", niter, " v: ", v, "; t: ", t)
+    end
+    return v, t
+end
+
+"""
     projected_sgd(B::Vector{Float64}, α::Float64, loss_sampler::Function;
                   maxiters::Int=100000, debug::Int=0)
 
@@ -92,4 +140,3 @@ function projected_sgd(B::Vector{Float64}, α::Float64, loss_sampler::Function;
     end
     return v, t
 end
-

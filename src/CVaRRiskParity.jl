@@ -34,10 +34,13 @@ while the other is a projected version into the feasible domain.
 
 module CVaRRiskParity
 
-@enum OptResult Converged NotConverged
+@enum OptResult Converged NotConverged LikelyUnbounded
 
 include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
 include("cvar_sgd.jl") # Stochastic gradient algorithm
+
+include("cp.jl") # Generic cutting plane algorithm
+include("risk_measures.jl") # Risk Measures for the generic algorithm
 
 """
     cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int=1000)
@@ -85,5 +88,7 @@ function cvar_rbp(B::Vector{Float64}, α::Float64, loss_sampler::Function; maxit
 end
 
 export cvar_rbp
+
+export CVaR, Entropic, WorstCase
 
 end

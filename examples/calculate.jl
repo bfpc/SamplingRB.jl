@@ -30,6 +30,10 @@ outf = joinpath("results", "095", "weights.npz")
 
 B = ones(11)
 alpha = 0.95
+ρ = CVaR(alpha)
+# γ = 2.
+# ρ = Entropic(γ)
+# ρ = WorstCase()
 
 days = [1, 5, 485]
 
@@ -38,26 +42,37 @@ true_prices = NPZ.npzread(pricesf)["allPrices"]
 
 ws = Vector{Float64}[]
 hards = Int64[]
+unbounded = Int64[]
 
 for d in days
     print(d, ", ")
     prices_sim   = NPZ.npzread(simulsf(d))["prices_sim"]
     prices_today = true_prices[d,:]
     relative_losses = 1 .- prices_sim' ./ prices_today
-    failed, w = cvar_rbp(B, alpha, relative_losses)
-    if failed
+    status, w = CVaRRiskParity.cutting_planes(B, relative_losses, ρ)
+    if status == CVaRRiskParity.NotConverged
         println(" didn't reach tolerance $tol in $maxiters iterations")
         push!(hards, d)
+    end
+    if status == CVaRRiskParity.LikelyUnbounded
+        push!(unbounded, d)
     end
     push!(ws, w)
 end
 println("done!")
 println()
 
-println("Scenarios with too large weights:")
-println("  (Likely the corresponding risk parity problem is unbounded below)")
-for i in 1:length(ws)
-    if any(ws[i] .> 1000)
+if unbounded != []
+    println("Scenarios with too large weights:")
+    println("  (Likely the corresponding risk parity problem is unbounded below)")
+    for i in unbounded
+        println("day ", days[i], " ", ws[i])
+    end
+end
+
+if hards != []
+    println("Scenarios for which cutting planes did not converge:")
+    for i in hards
         println("day ", days[i], " ", ws[i])
     end
 end

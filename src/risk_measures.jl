@@ -102,3 +102,25 @@ function value_function(measure::WorstCase, w::Vector, losses::Array{Float64,2})
 end
 
 
+"""
+    Distortion(g)
+
+The distortion risk measure associated to weights in function g.
+"""
+struct Distortion <: AbstractRiskMeasure
+    g::Function
+end
+
+function value_function(measure::Distortion, w::Vector, losses::Array{Float64,2})
+    g = measure.g
+
+    n = size(losses, 2)
+    realized_losses = losses' * w
+    acc_value = 0.0
+    sort!(realized_losses, rev=true)
+    for i in 1:n
+        cur_weight = g(i/n) - g((i-1)/n)
+        acc_value  += cur_weight * realized_losses[i]
+    end
+    return acc_value
+end

@@ -35,18 +35,20 @@ struct CVaR <: AbstractRiskMeasure
     end
 end
 
-function value_function(measure::CVaR, w::Vector, losses::Array{Float64,2})
+function risk(measure::CVaR, z::Vector)
     β = 1 - measure.α
+    n = length(z)
+    if β ≈ 0
+        return sum(z)/n
+    end
 
-    n = size(losses, 2)
-    realized_losses = losses' * w
     acc_events = 0
     acc_value = 0.0
-    for i in sortperm(realized_losses, rev=true)
+    for i in sortperm(z, rev=true)
         acc_events >= n*β && break
         cur_weight = min(1, n*β - acc_events)
         acc_events += 1
-        acc_value  += cur_weight * realized_losses[i]
+        acc_value  += cur_weight * z[i]
     end
     return acc_value / β
 end
@@ -65,6 +67,15 @@ struct Entropic <: AbstractRiskMeasure
         end
         return new(γ)
     end
+end
+
+function risk(measure::Entropic, z::Vector)
+    M = maximum(z)
+    acc = 0.0
+    for zi in z
+        acc += exp(measure.γ * (z-M))
+    end
+    return M + log(acc)/measure.γ
 end
 
 function value_function(measure::Entropic, w::Vector, losses::Array{Float64,2})
@@ -91,6 +102,10 @@ The worst-case scenario.
 """
 struct WorstCase <: AbstractRiskMeasure end
 
+function risk(measure::WorstCase, z::Vector)
+    return maximum(z)
+end
+
 function value_function(measure::WorstCase, w::Vector, losses::Array{Float64,2})
     n = size(losses, 2)
     curmax = -Inf
@@ -111,16 +126,15 @@ struct Distortion <: AbstractRiskMeasure
     g::Function
 end
 
-function value_function(measure::Distortion, w::Vector, losses::Array{Float64,2})
+function risk(measure::Distortion, z::Vector)
     g = measure.g
+    n = length(z)
 
-    n = size(losses, 2)
-    realized_losses = losses' * w
     acc_value = 0.0
-    sort!(realized_losses, rev=true)
+    sort!(z, rev=true)
     for i in 1:n
         cur_weight = g(i/n) - g((i-1)/n)
-        acc_value  += cur_weight * realized_losses[i]
+        acc_value  += cur_weight * z[i]
     end
     return acc_value
 end

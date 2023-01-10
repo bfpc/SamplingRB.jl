@@ -51,10 +51,17 @@ end
 Abstract type for different risk measures.
 
 Methods to be defined:
-  - value_function(risk_measure, x::Vector{Float64}, rel_losses::Array{Float64,2})
+  - risk(risk_measure, z::Vector)
+    Applies the risk measure to the random variable samples z
+
+Methods that can be specialized:
+  - value_function(risk_measure, x::Vector, rel_losses::Array{Float64,2})
 """
 abstract type AbstractRiskMeasure end
 
+function value_function(measure::AbstractRiskMeasure, w::Vector, losses::Array{Float64,2})
+    return risk(measure, losses'*w)
+end
 
 """
     cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2},

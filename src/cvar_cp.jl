@@ -36,7 +36,7 @@ function fcf(x, losses; alpha=0.85)
     return t + acc/n
 end
 
-function cp_model(B; ub_w=2000)
+function cp_model_cvar(B; ub_w=2000)
     dim = length(B)
     m = Model()
 
@@ -104,7 +104,7 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
     g = x -> fcf(x,rel_losses, alpha=alpha)
 
     # Build model
-    m = cp_model(B, ub_w=ub_w)
+    m = cp_model_cvar(B, ub_w=ub_w)
     JuMP.set_optimizer(m, Ipopt.Optimizer)
     JuMP.set_optimizer_attribute(m, "print_level", 0)
 

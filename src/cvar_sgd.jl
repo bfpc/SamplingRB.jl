@@ -48,7 +48,7 @@ end
 
 """
     sgd_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
-                   maxiters::Int=100000, ϵ::Float64=1e-12, debug::Int=0)
+                   maxiters::Int=10000, ϵ::Float64=1e-12, debug::Int=0)
 
 Compute the investment exposure on the assets in order to build a
 CV@R-α  risk budgeting portfolio using a stochastic gradient method
@@ -96,7 +96,7 @@ end
 
 """
     projected_sgd(B::Vector{Float64}, α::Float64, loss_sampler::Function;
-                  maxiters::Int=100000, debug::Int=0)
+                  maxiters::Int=10000, debug::Int=0)
 
 Compute the investment exposure on the assets in order to build a
 CV@R-α  risk budgeting portfolio using a projected stochastic gradient

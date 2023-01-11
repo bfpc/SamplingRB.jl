@@ -89,6 +89,6 @@ end
 
 export cvar_rbp
 
-export CVaR, Entropic, WorstCase
+export CVaR, Entropic, WorstCase, Distortion
 
 end

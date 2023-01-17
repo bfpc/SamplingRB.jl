@@ -50,9 +50,8 @@ function risk(measure::CVaR, z::Vector)
         acc_events += 1
         acc_value  += cur_weight * z[i]
     end
-    return acc_value / β
+    return acc_value / (n*β)
 end
-
 
 """
     Entropic(γ)
@@ -71,11 +70,12 @@ end
 
 function risk(measure::Entropic, z::Vector)
     M = maximum(z)
+    n = length(z)
     acc = 0.0
     for zi in z
-        acc += exp(measure.γ * (z-M))
+        acc += exp(measure.γ * (zi - M))
     end
-    return M + log(acc)/measure.γ
+    return M + log(acc/n)/measure.γ
 end
 
 function value_function(measure::Entropic, w::Vector, losses::Array{Float64,2})
@@ -91,7 +91,7 @@ function value_function(measure::Entropic, w::Vector, losses::Array{Float64,2})
         li = @view losses[:,i]
         acc += exp(measure.γ * (li'w - curmax))
     end
-    return curmax + log(acc)/measure.γ
+    return curmax + log(acc/n)/measure.γ
 end
 
 

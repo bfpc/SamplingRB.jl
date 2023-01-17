@@ -51,8 +51,8 @@ function sgd_small()
     return samples[:,idx]
   end
 
-  w = cvar_rbp(B, alpha, sampler)
-  @test w ≈ [0.23091991, 0.27860780, 0.49047228] atol = 1e-4
+  w, t = CVaRRiskParity.projected_sgd(B, alpha, sampler)
+  @test w/sum(w) ≈ [0.23091991, 0.27860780, 0.49047228] atol = 1e-4
 end
 
 @testset "CVaRRiskParity.jl" begin

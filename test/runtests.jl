@@ -18,6 +18,7 @@
 using Test
 using Random: MersenneTwister
 using CVaRRiskParity
+using CVaRRiskParity: risk
 
 function simpletest()
   rng = MersenneTwister(1)
@@ -55,12 +56,41 @@ function sgd_small()
   @test w/sum(w) ≈ [0.23091991, 0.27860780, 0.49047228] atol = 1e-4
 end
 
+function cvar_tests()
+  v = collect(1:10)
+  @test risk(CVaR(0.9), v) == 10
+  @test risk(CVaR(0.75), v) == 9.2
+  @test risk(CVaR(0.), v) == sum(v)/length(v)
+
+  w = [4, 7, 10, 9, 5, 3, 6, 2, 8, 1]
+  @test risk(CVaR(0.9), w) == 10
+  @test risk(CVaR(0.75), w) == 9.2
+  @test risk(CVaR(0.), w) == sum(w)/length(w)
+end
+
+function distortion_tests()
+  g10(x) = min(10x, 1)
+  g6(x)  = min( 6x, 1)
+
+  v = collect(1:10)
+  @test risk(Distortion(g10), v) == 10
+  @test risk(Distortion(g6), v) == 9.6
+
+  w = [4, 7, 10, 9, 5, 3, 6, 2, 8, 1]
+  @test risk(Distortion(g10), w) == 10
+  @test risk(Distortion(g6), w) == 9.6
+end
+
 @testset "CVaRRiskParity.jl" begin
   @testset "Simple" begin
     simpletest()
   end
   @testset "SGD" begin
     sgd_small()
+  end
+  @testset "Risk Measures" begin
+    @testset begin cvar_tests() end
+    @testset begin distortion_tests() end
   end
 end
 

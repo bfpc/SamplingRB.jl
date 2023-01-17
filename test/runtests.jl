@@ -18,7 +18,7 @@
 using Test
 using Random: MersenneTwister
 using CVaRRiskParity
-using CVaRRiskParity: risk
+using CVaRRiskParity: risk, value_function
 
 function simpletest()
   rng = MersenneTwister(1)
@@ -91,6 +91,21 @@ function entropic_tests()
   @test risk(Entropic(2.), w) ≈ 8.92141418140683
 end
 
+# Compatibility between `risk` and `value_function` when both are defined
+function compatibility_risk_vf()
+  rng = MersenneTwister(2)
+
+  # Parameters
+  d    = 3  # dimension
+  nsim = 10 # Nb of simulations
+
+  weights = rand(rng, d)
+  losses  = rand(rng, d, nsim)
+  for ρ in [Entropic(1.0), Entropic(2.3), WorstCase()]
+    @test risk(ρ, losses' * weights) == value_function(ρ, weights, losses)
+  end
+end
+
 @testset "CVaRRiskParity.jl" begin
   @testset "Simple" begin
     simpletest()
@@ -99,9 +114,10 @@ end
     sgd_small()
   end
   @testset "Risk Measures" begin
-    @testset begin cvar_tests() end
-    @testset begin distortion_tests() end
-    @testset begin entropic_tests() end
+    @testset "CV@R" begin cvar_tests() end
+    @testset "Distortion" begin distortion_tests() end
+    @testset "Entropic" begin entropic_tests() end
+    @testset "ValueFunctions" begin compatibility_risk_vf() end
   end
 end
 

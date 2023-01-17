@@ -81,6 +81,16 @@ function distortion_tests()
   @test risk(Distortion(g6), w) == 9.6
 end
 
+function entropic_tests()
+  v = collect(1:10)
+  @test risk(Entropic(1.), v) ≈ 8.156044651432666
+  @test risk(Entropic(2.), v) ≈ 8.92141418140683
+
+  w = [4, 7, 10, 9, 5, 3, 6, 2, 8, 1]
+  @test risk(Entropic(1.), w) ≈ 8.156044651432666
+  @test risk(Entropic(2.), w) ≈ 8.92141418140683
+end
+
 @testset "CVaRRiskParity.jl" begin
   @testset "Simple" begin
     simpletest()
@@ -91,6 +101,7 @@ end
   @testset "Risk Measures" begin
     @testset begin cvar_tests() end
     @testset begin distortion_tests() end
+    @testset begin entropic_tests() end
   end
 end
 

@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU General Public License along with
 # CVaRRiskParity.jl. If not, see <https://www.gnu.org/licenses/>.
 
+# The dispatch logic used for our risk measures is inspired from
+# the one used by plugins/risk_measures.jl in SDDP.jl
+
 """
     CVaR(α)
 

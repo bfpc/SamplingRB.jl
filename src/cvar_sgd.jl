@@ -1,19 +1,19 @@
 # Copyright (C) 2021 - 2022 Bernardo Freitas Paulo da Costa
 #
-# This file is part of CVaRRiskParity.jl.
+# This file is part of RiskBudgeting.jl.
 #
-# CVaRRiskParity.jl is free software: you can redistribute it and/or modify it
+# RiskBudgeting.jl is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or (at your option) any
 # later version.
 #
-# CVaRRiskParity.jl is distributed in the hope that it will be useful, but
+# RiskBudgeting.jl is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# CVaRRiskParity.jl. If not, see <https://www.gnu.org/licenses/>.
+# RiskBudgeting.jl. If not, see <https://www.gnu.org/licenses/>.
 
 import JuMP, Ipopt, ForwardDiff
 using JuMP: Model, @variable, @constraint, @objective, @NLconstraint
@@ -80,7 +80,7 @@ function sgd_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
     dim = length(B)
 
     # Starting point
-    v = ones(dim);
+    v = ones(dim) ./ dim;
     t = 0.;
 
     for niter = 1:maxiters

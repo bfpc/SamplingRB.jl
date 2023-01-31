@@ -1,25 +1,25 @@
 # Copyright (C) 2021 - 2022 Bernardo Freitas Paulo da Costa
 #
-# This file is part of CVaRRiskParity.jl.
+# This file is part of RiskBudgeting.jl.
 #
-# CVaRRiskParity.jl is free software: you can redistribute it and/or modify it
+# RiskBudgeting.jl is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or (at your option) any
 # later version.
 #
-# CVaRRiskParity.jl is distributed in the hope that it will be useful, but
+# RiskBudgeting.jl is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# CVaRRiskParity.jl. If not, see <https://www.gnu.org/licenses/>.
+# RiskBudgeting.jl. If not, see <https://www.gnu.org/licenses/>.
 
 import Pkg
 Pkg.activate(".")
 
 import NPZ
-using CVaRRiskParity
+using RiskBudgeting
 
 
 # Parameters
@@ -49,12 +49,12 @@ for d in days
     prices_sim   = NPZ.npzread(simulsf(d))["prices_sim"]
     prices_today = true_prices[d,:]
     relative_losses = 1 .- prices_sim' ./ prices_today
-    status, w = CVaRRiskParity.cutting_planes(B, relative_losses, ρ)
-    if status == CVaRRiskParity.NotConverged
+    status, w = RiskBudgeting.cutting_planes(B, relative_losses, ρ)
+    if status == RiskBudgeting.NotConverged
         println(" didn't reach tolerance $tol in $maxiters iterations")
         push!(hards, d)
     end
-    if status == CVaRRiskParity.LikelyUnbounded
+    if status == RiskBudgeting.LikelyUnbounded
         push!(unbounded, d)
     end
     push!(ws, w)

@@ -1,28 +1,32 @@
 # Copyright (C) 2021 - 2022 Bernardo Freitas Paulo da Costa
 #
-# This file is part of CVaRRiskParity.jl.
+# This file is part of RiskBudgeting.jl.
 #
-# CVaRRiskParity.jl is free software: you can redistribute it and/or modify it
+# RiskBudgeting.jl is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or (at your option) any
 # later version.
 #
-# CVaRRiskParity.jl is distributed in the hope that it will be useful, but
+# RiskBudgeting.jl is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# CVaRRiskParity.jl. If not, see <https://www.gnu.org/licenses/>.
+# RiskBudgeting.jl. If not, see <https://www.gnu.org/licenses/>.
 
 """
-# CVaRRiskParity
+# RiskBudgeting
 
-CVaRRiskParity is a package designed to calculate long-only weights for
-CV@R Risk Parity and Risk Budgeting portfolios,
+RiskBudgeting is a package designed to calculate long-only weights for
+coherent Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
 
-Currently, it implements a cutting plane algorithm
+It provides a general cutting plane algorithm for a coherent risk measures.
+Special risk measures, such as CVaR and distortion risk measures are
+already provided for ease of use.
+
+In the special case of CVaR, it implements a cutting plane algorithm
 with dedicated initialization for numerical stability and performance,
 allowing for several thousand simulations.
 It also implements two stochastic gradient algorithms,
@@ -32,10 +36,11 @@ One is based on the Lagrangian reformulation of the problem,
 while the other is a projected version into the feasible domain.
 """
 
-module CVaRRiskParity
+module RiskBudgeting
 
 @enum OptResult Converged NotConverged LikelyUnbounded
 
+# Conditional Value-at-Risk, aka Expected Shortfall and Average VaR
 include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
 include("cvar_sgd.jl") # Stochastic gradient algorithm
 

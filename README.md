@@ -1,10 +1,14 @@
-# CVaRRiskParity
+# RiskBudgeting
 
-CVaRRiskParity is a package designed to calculate long-only weights for
-CV@R Risk Parity and Risk Budgeting portfolios,
+RiskBudgeting is a package designed to calculate long-only weights for
+coherent Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
 
-Currently, it implements a cutting plane algorithm
+It provides a general cutting plane algorithm for a coherent risk measures.
+Special risk measures, such as CVaR and distortion risk measures are
+already provided for ease of use.
+
+In the special case of CVaR, it implements a cutting plane algorithm
 with dedicated initialization for numerical stability and performance,
 allowing for several thousand simulations.
 It also implements two stochastic gradient algorithms,
@@ -20,7 +24,7 @@ and evaluate the 0.9-CV@R risk parity portfolio (`B = ones`).
 
 ```julia
 using Random: MersenneTwister
-using CVaRRiskParity
+using RiskBudgeting
 
 rng = MersenneTwister(1)
 

@@ -44,6 +44,9 @@ module RiskBudgeting
 include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
 include("cvar_sgd.jl") # Stochastic gradient algorithm
 
+# Entropic Value-at-Risk, cutting planes algorithm
+include("evar_cp.jl")
+
 include("cp.jl") # Generic cutting plane algorithm
 include("risk_measures.jl") # Risk Measures for the generic algorithm
 

@@ -1,6 +1,6 @@
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-RiskBudgeting = "b84f0741-978f-4a85-8cef-ff508e5bc0b0"
+RiskBudgeting = "c377c86e-bf6b-4a25-91bb-5ed2a0abdac5"
 Gnuplot = "dc211083-a33a-5b79-959f-2ff34033469d"
 MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 NPZ = "15e1cf62-19b3-5cfa-8e77-841668bca605"

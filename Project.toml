@@ -1,7 +1,7 @@
 name = "RiskBudgeting"
-uuid = "b84f0741-978f-4a85-8cef-ff508e5bc0b0"
+uuid = "c377c86e-bf6b-4a25-91bb-5ed2a0abdac5"
 authors = ["Bernardo Freitas Paulo da Costa <bernardofpc@im.ufrj.br>"]
-version = "0.1.1"
+version = "0.2.0"
 
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"

@@ -39,17 +39,17 @@ struct CVaR <: AbstractRiskMeasure
     end
 end
 
-function risk(measure::CVaR, z::Vector)
+function risk(measure::CVaR, z::Vector{T}) where T
     β = 1 - measure.α
     n = length(z)
     if β ≈ 1
         return sum(z)/n
     elseif β ≈ 0
-        return maximum(z)
+        return maximum(z) / 1.0
     end
 
     acc_events = 0
-    acc_value = 0.0
+    acc_value = 1.0 * zero(T)
     for i in sortperm(z, rev=true)
         acc_events >= n*β && break
         cur_weight = min(1, n*β - acc_events)
@@ -77,10 +77,10 @@ struct Entropic <: AbstractRiskMeasure
     end
 end
 
-function risk(measure::Entropic, z::Vector)
+function risk(measure::Entropic, z::Vector{T}) where T
     M = maximum(z)
     n = length(z)
-    acc = 0.0
+    acc = 1.0 * zero(T)
     for zi in z
         acc += exp(measure.γ * (zi - M))
     end
@@ -135,11 +135,11 @@ struct Distortion <: AbstractRiskMeasure
     g::Function
 end
 
-function risk(measure::Distortion, z::Vector)
+function risk(measure::Distortion, z::Vector{T}) where T
     g = measure.g
     n = length(z)
 
-    acc_value = 0.0
+    acc_value = 1.0 * zero(T)
     sort!(z, rev=true)
     for i in 1:n
         cur_weight = g(i/n) - g((i-1)/n)

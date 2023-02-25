@@ -22,7 +22,7 @@ using LinearAlgebra: norm
 """
 Future cost function for Entropic Value-at-Risk representation
 """
-function fcf(x, losses; α=0.9)
+function fcf_evar(x, losses; α=0.9)
     dim, nscen = size(losses)
     weights = x[1:dim]
     t = x[dim+1]
@@ -53,12 +53,12 @@ This model needs a compact feasible set;
 since the weights are positive, we simply require an upper bound.
 Most of the time, this (already large) default value should work.
 """
-function cp_model_evar(B; ub=2000)
+function cp_model_evar(B; ub_w=2000)
     dim = length(B)
     m = Model()
 
     # Weights and RB constraint
-    @variable(m, 0 <= w[1:dim] <= ub)
+    @variable(m, 0 <= w[1:dim] <= ub_w)
     @NLconstraint(m, sum(bi * log(wi) for (bi,wi) in zip(B,w)) >= 0.0)
 
     # Entropic VaR auxiliary
@@ -72,20 +72,11 @@ function cp_model_evar(B; ub=2000)
     return m
 end
 
-function add_cut!(m, xk, fcf)
-    n    = length(xk)
-    f    = fcf(xk)
-    grad = ForwardDiff.gradient(fcf, xk)
-    c = @constraint(m, m[:z] >= f + sum(grad[i] * (m[:w][i] - xk[i]) for i = 1:n-1) + grad[end]*(m[:t] - xk[end]))
-    push!(m.ext[:cuts], c)
-    return f, grad
-end
-
 """
     cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Float64, 2};
                         tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
 
-Compute the investment weights on the assets in order to build a
+Compute the investment weights on the assets in order to build an
 Entropic V@R-alpha  risk budgeting portfolio using a cutting plane method.
 
 The portfolio is such that each asset  j  contributs to the total risk with  B[j],
@@ -115,10 +106,10 @@ function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Floa
     @assert 0 <= α <= 1
 
     # Second stage value function
-    g = x -> fcf(x, losses; α)
+    g = x -> fcf_evar(x, losses; α)
 
     # Build model
-    m = cp_model_evar(B; ub=ub_w)
+    m = cp_model_evar(B; ub_w)
     JuMP.set_optimizer(m, Ipopt.Optimizer)
     JuMP.set_optimizer_attribute(m, "print_level", 0)
     if tol < 1e-7
@@ -131,7 +122,7 @@ function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Floa
     # Add a first cut (lower bound)
     w_start = ones(dim);
     t_start = 1;
-    f, grad = add_cut!(m, [w_start..., t_start], g)
+    f, grad = add_cut!(m, w_start, t_start, g)
 
     w_prev = w_start
     wk     = zeros(dim)
@@ -141,12 +132,12 @@ function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Floa
         JuMP.optimize!(m)
         lb  = JuMP.objective_value(m)
         wk .= JuMP.value.(m[:w])
-        tk  = JuMP.value.(m[:t])
+        tk  = JuMP.value(m[:t])
         st  = JuMP.primal_status(m)
 
-        f, grad = add_cut!(m, [wk..., tk], g)
+        f, grad = add_cut!(m, wk, tk, g)
         gap = f - lb
-        debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", norm2(wk .- w_prev))
+        debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", norm(wk .- w_prev))
         debug > 1 && println("       UB: ", f)
         debug > 1 && println("       LB: ", lb)
         debug > 1 && println("     Sols: ", wk, ", ", tk)
@@ -158,7 +149,6 @@ function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Floa
         end
         w_prev .= wk
     end
-
     wk ./= sum(wk)
     return status, wk, tk
 end

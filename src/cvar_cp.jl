@@ -24,7 +24,7 @@ function cvar_ru(w,t,loss,alpha)
     # Not adding "t" for each scenario is numerically better for SAA: add only once, not averaged
 end
 
-function fcf(x, losses; alpha=0.85)
+function fcf_cvar(x, losses; alpha=0.85)
     w = x[1:end-1]
     t = x[end]
     acc = 0.0
@@ -89,7 +89,8 @@ weight that large, it should be checked for soundness.  The most common case
 is when the problem is unbounded below, for example if  alpha  is not large enough.
 
 debug >= 1  prints the iteration numbers, gap and change in the weights.
-debug >= 2  also prints the current upper bound and trial points (weights, V@R)
+debug >= 2  also prints the current upper and lower bounds and trial points (weights, V@R)
+debug >= 3  also prints the risk budgeting constraint and the first-stage status
 
 Returns a triplet
 (result, weights, V@R-alpha)
@@ -101,12 +102,18 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
     @assert 0 <= alpha <= 1
 
     # Second stage value function
-    g = x -> fcf(x,rel_losses, alpha=alpha)
+    g = x -> fcf_cvar(x, rel_losses; alpha)
 
     # Build model
-    m = cp_model_cvar(B, ub_w=ub_w)
+    m = cp_model_cvar(B; ub_w)
     JuMP.set_optimizer(m, Ipopt.Optimizer)
     JuMP.set_optimizer_attribute(m, "print_level", 0)
+    if tol < 1e-7
+        if tol < 1e-14
+            @warn "Using very small tolerances (desired = $(tol)) is extremely dangereous."
+        end
+        JuMP.set_optimizer_attribute(m, "tol", tol/10)
+    end
 
     # Add a first cut (lower bound) and an upper bound on t, to avoid degenerate solutions
     w_start = ones(dim);
@@ -123,16 +130,20 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
         lb = JuMP.objective_value(m)
         wk .= JuMP.value.(m[:w])
         tk  = JuMP.value(m[:t])
+        st  = JuMP.primal_status(m)
+
         f, grad = add_cut!(m, wk, tk, g)
         gap = f - lb
         debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", norm(wk .- w_prev))
         debug > 1 && println("       UB: ", f)
-        debug > 1 && println("     Sols: ", wk, " - ", tk)
+        debug > 1 && println("       LB: ", lb)
+        debug > 1 && println("     Sols: ", wk, ", ", tk)
+        debug > 2 && println("      RBC: ", sum(bi * log(wi) for (bi,wi) in zip(B,wk)))
+        debug > 2 && println("   status: ", st)
         if niter > 10 && (gap < tol || gap < tol*abs(f))
             status = Converged
             break
         end
-        niter += 1
         w_prev .= wk
     end
     wk ./= sum(wk)

@@ -24,7 +24,8 @@
 The conditional value at risk (CV@R) for a random variable Z.
 
 Computes the expectation of the outcomes above the α quantile.
-α must be in `[0,1]`; if `α=0`, this is equivalent to the Expectation.
+α must be in `[0,1]`; if `α=0`, this is equivalent to the Expectation,
+and if `α=1`, this the Supremum.
 
 CV@R is also known as average value at risk (AV@R) and expected shortfall (ES).
 """
@@ -41,8 +42,10 @@ end
 function risk(measure::CVaR, z::Vector)
     β = 1 - measure.α
     n = length(z)
-    if β ≈ 0
+    if β ≈ 1
         return sum(z)/n
+    elseif β ≈ 0
+        return maximum(z)
     end
 
     acc_events = 0
@@ -59,7 +62,10 @@ end
 """
     Entropic(γ)
 
-The entropic risk of a random variable Z: 1/γ log E[ exp(γZ) ]
+The entropic risk of a random variable Z: 1/γ log E[ exp(γZ) ].
+
+γ must be positive; as `γ → 0`, this converges to the Expectation,
+and as `γ → ∞`, to the Supremum.
 """
 struct Entropic <: AbstractRiskMeasure
     γ::Float64

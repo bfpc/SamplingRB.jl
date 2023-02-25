@@ -77,7 +77,7 @@ If the evaluation of the Risk Measure is efficient,
 this scales to several thousand realizations of the simulations of relative losses.
 
 The algorithm stops after reaching a provable optimality gap within
-(both absolute and relative) tolerance  tol, or after  maxiters  iterations,
+(either absolute or relative) tolerance  tol, or after  maxiters  iterations,
 if it fails to converge.
 
 In the beginning, the algorithm needs a bounding box for the weights.
@@ -88,7 +88,8 @@ is when the problem is unbounded below,
 for example if the risk measure is too conservative.
 
 debug >= 1  prints the iteration numbers, gap and change in the weights.
-debug >= 2  also prints the current upper bound and trial weights.
+debug >= 2  also prints the current upper and lower bounds and trial weights.
+debug >= 3  also prints the risk budgeting constraint and the first-stage status
 
 Returns a tuple
 (result, weights)
@@ -102,9 +103,15 @@ function cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2}, risk_m
     g = w -> value_function(risk_measure, w, rel_losses)
 
     # Build model
-    m = cp_model(B, ub_w=ub_w)
+    m = cp_model(B; ub_w)
     JuMP.set_optimizer(m, Ipopt.Optimizer)
     JuMP.set_optimizer_attribute(m, "print_level", 0)
+    if tol < 1e-7
+        if tol < 1e-14
+            @warn "Using very small tolerances (desired = $(tol)) is extremely dangereous."
+        end
+        JuMP.set_optimizer_attribute(m, "tol", tol/10)
+    end
 
     # Add a first cut (lower bound) to avoid degenerate solutions
     w_start = ones(dim);
@@ -117,17 +124,22 @@ function cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2}, risk_m
         JuMP.optimize!(m)
         lb = JuMP.objective_value(m)
         wk .= JuMP.value.(m[:w])
+        tk  = JuMP.value(m[:t])
+        st  = JuMP.primal_status(m)
+
         f, grad = add_cut!(m, wk, g)
         gap = f - lb
         debug > 0 && println("Iteration: ", niter, " - gap: ", gap, " - moving: ", norm(wk .- w_prev))
         debug > 1 && println("       UB: ", f)
+        debug > 1 && println("       LB: ", lb)
         debug > 1 && println("  Weights: ", wk)
+        debug > 2 && println("      RBC: ", sum(bi * log(wi) for (bi,wi) in zip(B,wk)))
+        debug > 2 && println("   status: ", st)
         if niter > 10 && (gap < tol || gap < tol*abs(f))
             in_boundary = all(isapprox.(wk, ub_w, atol=tol, rtol=tol))
             status = in_boundary ? LikelyUnbounded : Converged
             break
         end
-        niter += 1
         w_prev .= wk
     end
     wk ./= sum(wk)

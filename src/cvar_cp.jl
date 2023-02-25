@@ -79,14 +79,15 @@ The portfolio is such that each asset  j  contributs to the total risk with  B[j
 which is also called a  risk appetite.
 
 The algorithm stops after reaching a provable optimality gap within
-(both absolute and relative) tolerance  tol, or after  maxiters  iterations,
+(either absolute or relative) tolerance  tol, or after  maxiters  iterations,
 if it fails to converge.
 
 In the beginning, the algorithm needs a bounding box for the weights.
 Since the logarithm already implies w > 0, we use a sufficiently large bound
 ub_w  for all weights.  If the algorithm converges to a solution that has any
 weight that large, it should be checked for soundness.  The most common case
-is when the problem is unbounded below, for example if  alpha  is not large enough.
+is when the problem is unbounded below,
+for example if  alpha  is not large enough.
 
 debug >= 1  prints the iteration numbers, gap and change in the weights.
 debug >= 2  also prints the current upper and lower bounds and trial points (weights, V@R)
@@ -141,7 +142,8 @@ function cutting_planes(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Fl
         debug > 2 && println("      RBC: ", sum(bi * log(wi) for (bi,wi) in zip(B,wk)))
         debug > 2 && println("   status: ", st)
         if niter > 10 && (gap < tol || gap < tol*abs(f))
-            status = Converged
+            in_boundary = all(isapprox.(wk, ub_w, atol=tol, rtol=tol))
+            status = in_boundary ? LikelyUnbounded : Converged
             break
         end
         w_prev .= wk

@@ -83,7 +83,7 @@ The portfolio is such that each asset  j  contributs to the total risk with  B[j
 which is also called a  risk appetite.
 
 The algorithm stops after reaching a provable optimality gap within
-(both absolute and relative) tolerance  tol, or after  maxiters  iterations,
+(either absolute or relative) tolerance  tol, or after  maxiters  iterations,
 if it fails to converge.
 
 In the beginning, the algorithm needs a bounding box for the weights.
@@ -144,7 +144,8 @@ function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Floa
         debug > 2 && println("      RBC: ", sum(bi * log(wi) for (bi,wi) in zip(B,wk)))
         debug > 2 && println("   status: ", st)
         if niter > 10 && (gap < tol || gap < tol*abs(f))
-            status = Converged
+            in_boundary = all(isapprox.(wk, ub_w, atol=tol, rtol=tol))
+            status = in_boundary ? LikelyUnbounded : Converged
             break
         end
         w_prev .= wk

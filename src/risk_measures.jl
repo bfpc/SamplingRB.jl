@@ -1,19 +1,19 @@
 # Copyright (C) 2021 - 2022 Bernardo Freitas Paulo da Costa
 #
-# This file is part of RiskBudgeting.jl.
+# This file is part of SamplingRB.jl.
 #
-# RiskBudgeting.jl is free software: you can redistribute it and/or modify it
+# SamplingRB.jl is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or (at your option) any
 # later version.
 #
-# RiskBudgeting.jl is distributed in the hope that it will be useful, but
+# SamplingRB.jl is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# RiskBudgeting.jl. If not, see <https://www.gnu.org/licenses/>.
+# SamplingRB.jl. If not, see <https://www.gnu.org/licenses/>.
 
 # The dispatch logic used for our risk measures is inspired from
 # the one used by plugins/risk_measures.jl in SDDP.jl

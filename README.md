@@ -1,6 +1,6 @@
-# RiskBudgeting
+# SamplingRB
 
-RiskBudgeting is a package designed to calculate long-only weights for
+SamplingRB is a package designed to calculate long-only weights for
 coherent Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
 
@@ -24,7 +24,7 @@ and evaluate the 0.9-CV@R risk parity portfolio (`B = ones`).
 
 ```julia
 using Random: MersenneTwister
-using RiskBudgeting
+using SamplingRB
 
 rng = MersenneTwister(1)
 

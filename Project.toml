@@ -1,4 +1,4 @@
-name = "RiskBudgeting"
+name = "SamplingRB"
 uuid = "c377c86e-bf6b-4a25-91bb-5ed2a0abdac5"
 authors = ["Bernardo Freitas Paulo da Costa <bernardofpc@im.ufrj.br>"]
 version = "0.2.0"

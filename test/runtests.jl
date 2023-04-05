@@ -1,24 +1,24 @@
 # Copyright (C) 2021 - 2022 Bernardo Freitas Paulo da Costa
 #
-# This file is part of RiskBudgeting.jl.
+# This file is part of SamplingRB.jl.
 #
-# RiskBudgeting.jl is free software: you can redistribute it and/or modify it
+# SamplingRB.jl is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
 # Software Foundation, either version 3 of the License, or (at your option) any
 # later version.
 #
-# RiskBudgeting.jl is distributed in the hope that it will be useful, but
+# SamplingRB.jl is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# RiskBudgeting.jl. If not, see <https://www.gnu.org/licenses/>.
+# SamplingRB.jl. If not, see <https://www.gnu.org/licenses/>.
 
 using Test
 using Random: MersenneTwister
-using RiskBudgeting
-using RiskBudgeting: risk, value_function
+using SamplingRB
+using SamplingRB: risk, value_function
 
 function simpletest()
   rng = MersenneTwister(1)
@@ -52,7 +52,7 @@ function sgd_small()
     return samples[:,idx]
   end
 
-  w, t = RiskBudgeting.projected_sgd(B, alpha, sampler)
+  w, t = SamplingRB.projected_sgd(B, alpha, sampler)
   @test w/sum(w) ≈ [0.23091991, 0.27860780, 0.49047228] atol = 1e-4
 end
 
@@ -106,7 +106,7 @@ function compatibility_risk_vf()
   end
 end
 
-@testset "RiskBudgeting.jl" begin
+@testset "SamplingRB.jl" begin
   @testset "Simple" begin
     simpletest()
   end

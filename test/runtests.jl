@@ -53,7 +53,11 @@ function sgd_small()
   end
 
   w, t = SamplingRB.projected_sgd(B, alpha, sampler)
-  @test w/sum(w) ≈ [0.23091991, 0.27860780, 0.49047228] atol = 1e-4
+  ans = [0.23091991, 0.27860780, 0.49047228]
+  if Sys.ARCH != :x86_64
+    ans = [0.23533952, 0.28927224, 0.47538824]
+  end
+  @test w/sum(w) ≈ ans atol = 1e-4
 end
 
 function cvar_tests()

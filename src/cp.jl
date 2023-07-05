@@ -135,7 +135,7 @@ function cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2}, risk_m
         debug > 2 && println("      RBC: ", sum(bi * log(wi) for (bi,wi) in zip(B,wk)))
         debug > 2 && println("   status: ", st)
         if niter > 10 && (gap < tol || gap < tol*abs(f))
-            in_boundary = all(isapprox.(wk, ub_w, atol=tol, rtol=tol))
+            in_boundary = any(isapprox.(wk, ub_w, atol=tol, rtol=tol))
             status = in_boundary ? LikelyUnbounded : Converged
             break
         end

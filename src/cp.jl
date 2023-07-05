@@ -76,7 +76,7 @@ debug >= 3  also prints the risk budgeting constraint and the first-stage status
 Returns a tuple
 (result, weights)
 """
-function cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2}, risk_measure::AbstractRiskMeasure;
+function cutting_planes(B::Vector{Float64}, risk_measure::AbstractRiskMeasure, rel_losses::Array{Float64,2};
                         tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
     dim = size(rel_losses,1)
     @assert dim == length(B)

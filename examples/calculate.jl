@@ -49,7 +49,7 @@ for d in days
     prices_sim   = NPZ.npzread(simulsf(d))["prices_sim"]
     prices_today = true_prices[d,:]
     relative_losses = 1 .- prices_sim' ./ prices_today
-    status, w = SamplingRB.cutting_planes(B, relative_losses, ρ)
+    status, w = SamplingRB.cutting_planes(B, ρ, relative_losses)
     if status == SamplingRB.NotConverged
         println(" didn't reach tolerance $tol in $maxiters iterations")
         push!(hards, d)

@@ -40,15 +40,20 @@ module SamplingRB
 
 @enum OptResult Converged NotConverged LikelyUnbounded
 
+# Cutting planes algorithm
 # Conditional Value-at-Risk, aka Expected Shortfall and Average VaR
-include("cvar_cp.jl") # Cutting Plane algorithm, and related utilities
-include("cvar_sgd.jl") # Stochastic gradient algorithm
+include("cvar_cp.jl")
 
-# Entropic Value-at-Risk, cutting planes algorithm
+# Entropic Value-at-Risk
 include("evar_cp.jl")
 
-include("cp.jl") # Generic cutting plane algorithm
-include("risk_measures.jl") # Risk Measures for the generic algorithm
+# Generic Risk Measures and generic algorithm
+include("risk_measures.jl")
+include("cp.jl")
+
+
+# Stochastic gradient algorithm for CVaR
+include("cvar_sgd.jl")
 
 """
     cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int=1000)

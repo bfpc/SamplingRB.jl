@@ -65,15 +65,15 @@ println()
 if unbounded != []
     println("Scenarios with too large weights:")
     println("  (Likely the corresponding risk parity problem is unbounded below)")
-    for i in unbounded
-        println("day ", days[i], " ", ws[i])
+    for d in unbounded
+        println("day $d")
     end
 end
 
 if hards != []
     println("Scenarios for which cutting planes did not converge:")
-    for i in hards
-        println("day ", days[i], " ", ws[i])
+    for d in hards
+        println("day $d")
     end
 end
 

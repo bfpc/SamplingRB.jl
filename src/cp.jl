@@ -124,7 +124,6 @@ function cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2}, risk_m
         JuMP.optimize!(m)
         lb = JuMP.objective_value(m)
         wk .= JuMP.value.(m[:w])
-        tk  = JuMP.value(m[:t])
         st  = JuMP.primal_status(m)
 
         f, grad = add_cut!(m, wk, g)

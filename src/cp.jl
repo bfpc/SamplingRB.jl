@@ -48,7 +48,7 @@ end
 """
     cutting_planes(B::Vector{Float64}, rel_losses::Array{Float64,2},
                    risk_measure::AbstractRiskMeasure;
-                   tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
+                   tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0, normalize::Bool=true)
 
 Compute the investment weights on the assets in order to build a
 risk budgeting portfolio using a cutting plane method.
@@ -75,9 +75,10 @@ debug >= 3  also prints the risk budgeting constraint and the first-stage status
 
 Returns a tuple
 (result, weights)
+where the weights sum to one if normalize == true
 """
 function cutting_planes(B::Vector{Float64}, risk_measure::AbstractRiskMeasure, rel_losses::Array{Float64,2};
-                        tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
+                        tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0, normalize::Bool=true)
     dim = size(rel_losses,1)
     @assert dim == length(B)
 
@@ -123,6 +124,6 @@ function cutting_planes(B::Vector{Float64}, risk_measure::AbstractRiskMeasure, r
         end
         w_prev .= wk
     end
-    wk ./= sum(wk)
+    normalize && wk ./= sum(wk)
     return status, wk
 end

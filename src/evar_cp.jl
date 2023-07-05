@@ -74,7 +74,7 @@ end
 
 """
     cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Float64, 2};
-                        tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
+                        tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0, normalize::Bool=true)
 
 Compute the investment weights on the assets in order to build an
 Entropic V@R-alpha  risk budgeting portfolio using a cutting plane method.
@@ -98,9 +98,10 @@ debug >= 3  also prints the risk budgeting constraint and the first-stage status
 
 Returns a triplet
 (status, weights, t)
+where the weights sum to one if normalize == true
 """
 function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Float64, 2};
-                             tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0)
+                             tol::Float64=1e-6, maxiters::Int=1000, ub_w::Float64=2000., debug::Int=0, normalize::Bool=true)
     dim = size(losses, 1)
     @assert dim == length(B)
     @assert 0 <= α <= 1
@@ -150,7 +151,7 @@ function cutting_planes_evar(B::Vector{Float64}, α::Float64, losses::Array{Floa
         end
         w_prev .= wk
     end
-    wk ./= sum(wk)
+    normalize && wk ./= sum(wk)
     return status, wk, tk
 end
 

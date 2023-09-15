@@ -40,16 +40,21 @@ days = [1, 5, 485]
 # Script itself
 true_prices = NPZ.npzread(pricesf)["allPrices"]
 
-ws = Vector{Float64}[]
+ws = Dict{Int64,Vector{Float64}}()
 hards = Int64[]
 unbounded = Int64[]
 
+rl = Dict{Int,Array}()
 for d in days
-    print(d, ", ")
     prices_sim   = NPZ.npzread(simulsf(d))["prices_sim"]
     prices_today = true_prices[d,:]
     relative_losses = 1 .- prices_sim' ./ prices_today
-    status, w = SamplingRB.cutting_planes(B, ρ, relative_losses)
+    rl[d] = relative_losses
+end
+
+for d in days
+    print(d, ", ")
+    status, w = SamplingRB.cutting_planes(B, ρ, rl[d])
     if status == SamplingRB.NotConverged
         println(" didn't reach tolerance $tol in $maxiters iterations")
         push!(hards, d)
@@ -57,7 +62,7 @@ for d in days
     if status == SamplingRB.LikelyUnbounded
         push!(unbounded, d)
     end
-    push!(ws, w)
+    ws[d] = w
 end
 println("done!")
 println()
@@ -79,4 +84,4 @@ end
 
 # Saving weights for later use
 mkpath(dirname(outf))
-NPZ.npzwrite(outf, Dict("ws" => hcat(ws...)))
+NPZ.npzwrite(outf, Dict("ws" => hcat([ws[d] for d in days]...)))

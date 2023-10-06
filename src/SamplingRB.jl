@@ -65,15 +65,15 @@ This matrix has size  (|B|, nsamples), so that each column corresponds
 to a sample of relative losses, and each row to a given asset.
 
 The algorithm stops after reaching a provable optimality gap within
-(both absolute and relative) tolerance `tol`, or after `maxiters` iterations,
-if it fails to converge.
+(either absolute and relative) tolerance `tol`, or after `maxiters`
+iterations, if it fails to converge.
 
 Returns (failed, w) :: Bool, Vector{Float64}
 
-For more details on the algorithm, see `cutting_planes`.
+For more details on the algorithm, see `cutting_planes_cvar`.
 """
 function cvar_rbp(B::Vector{Float64}, alpha::Float64, rel_losses::Array{Float64,2}; tol::Float64=1e-6, maxiters::Int=1000)
-  f, w, t = cutting_planes(B, alpha, rel_losses; tol=tol, maxiters=maxiters, debug=0)
+  f, w, t = cutting_planes_cvar(B, alpha, rel_losses; tol=tol, maxiters=maxiters, debug=0)
   return f == NotConverged, w
 end
 

@@ -101,6 +101,7 @@ function cvar_rbp(B::Vector{Float64}, α::Float64, loss_sampler::Function; maxit
 end
 
 export cvar_rbp
+export cutting_planes, cutting_planes_cvar, cutting_planes_evar, sgd_Lagrangian, sgd_projected
 
 export CVaR, Entropic, WorstCase, Distortion
 

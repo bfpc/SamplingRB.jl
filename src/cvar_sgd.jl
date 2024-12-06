@@ -97,6 +97,49 @@ function sgd_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
 end
 
 """
+    smwu_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
+                    η::Float64=0.1, maxiters::Int=10000, debug::Int=0)
+
+Compute the investment exposure on the assets in order to build a
+CV@R-α  risk budgeting portfolio using stochastic multiplicative weight update
+on the Lagrangian formulation of the optimization problem,
+where we set (arbitrarily) the multiplier to one:
+   ```math
+   min._{v} CV@R_alpha[L(v)] - sum B_i log(v_i)
+   ```
+
+This is made possible by the introduction of an auxiliary variable  t
+which replaces the CVaR by an expectation, for which stochastic gradients
+are easy to calculate.
+This variable follows a classical additive gradient update.
+
+We use a decaying stepsize rule of η/k
+The algorithm stops after maxiter iterations.
+
+debug >= 1  prints the iteration numbers, exposures and current estimate of V@R.
+
+Returns a pair (v, V@R-α)
+"""
+function smwu_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
+                         η::Float64=0.1, maxiters::Int=10000, debug::Int=0)
+    @assert 0 <= α <= 1
+    dim = length(B)
+
+    # Starting point
+    v = dim * ones(dim)
+    t = 0.;
+
+    for niter = 1:maxiters
+        dv, dt = subgrad_oracle(v, t, loss_sampler(), α)
+        stepsize = η/niter
+        v .*= exp.(-(dv - B./v) * stepsize)
+        t  -= dt*stepsize
+        debug > 0 && println("Iteration: ", niter, " v: ", v, "; t: ", t)
+    end
+    return v, t
+end
+
+"""
     projected_sgd(B::Vector{Float64}, α::Float64, loss_sampler::Function;
                   maxiters::Int=10000, debug::Int=0)
 

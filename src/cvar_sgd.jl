@@ -80,7 +80,7 @@ function sgd_Lagrangian(B::Vector{Float64}, α::Float64, loss_sampler::Function;
     dim = length(B)
 
     # Starting point
-    v = ones(dim) ./ dim;
+    v = dim * ones(dim)
     t = 0.;
 
     for niter = 1:maxiters

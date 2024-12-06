@@ -41,4 +41,6 @@ status, w = cvar_rbp(B, alpha, relative_losses)
 @assert isapprox(w, [0.2280, 0.2706, 0.5014]; atol=1e-4)
 ```
 
-# Example using JuliaCall from R
+# Interfaces
+- From `R`: https://github.com/dccsillag/samplingrb.r
+- From `python`: https://github.com/dccsillag/sampling_rb.py

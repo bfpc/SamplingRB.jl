@@ -3,6 +3,9 @@
 SamplingRB is a package designed to calculate long-only weights for
 coherent Risk Parity and Risk Budgeting portfolios,
 given arbitrary simulations of relative losses of each asset.
+It is essentially based on the paper
+[Risk budgeting portfolios from simulations](https://www.sciencedirect.com/science/article/pii/S0377221723004277)
+by Bernardo Freitas Paulo da Costa, Silvana M. Pesenti and Rodrigo Targino.
 
 It provides a general cutting plane algorithm for a coherent risk measures.
 Special risk measures, such as CVaR and distortion risk measures are
